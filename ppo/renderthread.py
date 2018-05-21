@@ -1,8 +1,8 @@
 import threading
 import time
 
-
 class RenderThread(threading.Thread):
+
     def __init__(self, sess, trainer, environment, brain_name, normalize, fps):
         threading.Thread.__init__(self)
         self.sess = sess
@@ -24,7 +24,11 @@ class RenderThread(threading.Thread):
                         while self.paused:
                             self.pause_cond.wait()
                         t_s = time.time()
-                        info = self.trainer.take_action(info, self.env, self.brain_name, 0, self.normalize,
+                        info = self.trainer.take_action(info,
+                                                        self.env,
+                                                        self.brain_name,
+                                                        steps=0,
+                                                        normalize=self.normalize,
                                                         stochastic=False)
                         done = info.local_done[0]
                         time.sleep(max(0, 1 / self.fps - (time.time() - t_s)))
