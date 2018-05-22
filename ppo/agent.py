@@ -1,4 +1,4 @@
-class BrainInfo:
+class AgentInfo:
 
     def __init__(self, state, memory=None, reward=None, agents=None, local_done=None, action=None):
         """
@@ -11,7 +11,7 @@ class BrainInfo:
         self.rewards = reward
         self.states = state
 
-class BrainParameters:
+class AgentParameters:
 
     def __init__(self, name, params):
         """
