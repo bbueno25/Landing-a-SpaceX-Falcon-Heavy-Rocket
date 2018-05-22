@@ -32,7 +32,7 @@ if __name__ == '__main__':
                         default=2.5e-3 * 16,
                         help='How large the experience buffer should be before gradient descent [default: 2048].')
     parser.add_argument('--env_name',
-                        default='rocket-lander-v0',
+                        default='RocketLander-v0',
                         help='Name of environment.')
     parser.add_argument('--epsilon',
                         default=0.2,
@@ -59,7 +59,7 @@ if __name__ == '__main__':
                         default=20e6,
                         help='Maximum number of steps to run environment [default: 1e6].')
     parser.add_argument('--model_path',
-                        default='/models',
+                        default='./models',
                         help='The sub-directory name for model and summary statistics.')
     parser.add_argument('--normalize_steps',
                         default=10e6,
@@ -83,7 +83,7 @@ if __name__ == '__main__':
                         default=2.5e-3 * 5,
                         help='Frequency at which to save training statistics [default: 10000].')
     parser.add_argument('--summary_path',
-                        default='/ppo_summary',
+                        default='./ppo_summary',
                         help='The sub-directory name for model and summary statistics.')
     parser.add_argument('--time_horizon',
                         default=2048,
