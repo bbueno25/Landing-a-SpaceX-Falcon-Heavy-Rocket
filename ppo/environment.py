@@ -1,5 +1,5 @@
 import atexit
-import brain
+import agent
 import gym
 import logging
 import numpy as np
@@ -46,14 +46,14 @@ class GymEnvironment:
         self._data = {}
         self._log_path = log_path
         self._global_done = False
-        self._brains = {}
-        self._brain_names = ["FirstBrain"]
-        self._external_brain_names = self._brain_names
+        self._agents = {}
+        self._agent_names = ["FirstAgent"]
+        self._external_agent_names = self._agent_names
         self._parameters = {"stateSize": self.ob_space_size,
                             "actionSize": self.ac_space_size,
                             "actionSpaceType": self.ac_space_type,
                             "stateSpaceType": self.ob_space_type}
-        self._brains[self._brain_names[0]] = BrainParameters(self._brain_names[0], self._parameters)
+        self._agents[self._agent_names[0]] = agent.AgentParameters(self._agent_names[0], self._parameters)
         self._loaded = True
         logger.info("Environment started successfully!")
 
@@ -67,18 +67,47 @@ class GymEnvironment:
                                           self.ob_space_size, self.ob_space_type)
 
     def _state_to_info(self):
-        state = np.array(self._current_returns[self._brain_names[0]][0])
+        state = np.array(self._current_returns[self._agent_names[0]][0])
         if self.ob_space_type == "continuous":
             states = state.reshape((1, self.ob_space_size))
         else:
             states = state.reshape((1, 1))
         memories = []
-        rewards = [self._current_returns[self._brain_names[0]][1]]
-        agents = [self._brain_names[0]]
-        dones = [self._current_returns[self._brain_names[0]][2]]
+        rewards = [self._current_returns[self._agent_names[0]][1]]
+        agents = [self._agent_names[0]]
+        dones = [self._current_returns[self._agent_names[0]][2]]
         actions = self._last_action
-        self._data[self._brain_names[0]] = BrainInfo(states, memories, rewards, agents, dones, actions)
+        self._data[self._agent_names[0]] = agent.AgentInfo(states, memories, rewards, agents, dones, actions)
         return self._data
+
+    @property
+    def academy_name(self):
+        return self._academy_name
+
+    @property
+    def agent_names(self):
+        return self._agent_names
+
+    @property
+    def agents(self):
+        return self._agents
+
+    def close(self):
+        """
+        Sends a shutdown signal to the gym environment.
+        """
+        self.env.close()
+
+    @property
+    def external_agent_names(self):
+        return self._external_agent_names
+    @property
+    def global_done(self):
+        return self._global_done
+
+    @property
+    def logfile_path(self):
+        return self._log_path
 
     def reset(self):
         """
@@ -88,7 +117,7 @@ class GymEnvironment:
             initial reset state of the environment.
         """
         obs = self.env.reset()
-        self._current_returns = {self._brain_names[0]: [obs, 0, False]}
+        self._current_returns = {self._agent_names[0]: [obs, 0, False]}
         self._last_action = [0] * self.ac_space_size if self.ac_space_type == 'continuous' else 0
         self._global_done = False
         return self._state_to_info()
@@ -107,7 +136,7 @@ class GymEnvironment:
             obs, rew, done, _ = self.env.step(action[0])
             if done:
                 self._global_done = True
-            self._current_returns[self._brain_names[0]] = [obs, rew, done]
+            self._current_returns[self._agent_names[0]] = [obs, rew, done]
             self._last_action = action
             if self.render:
                 self.env.render()
@@ -118,33 +147,3 @@ class GymEnvironment:
             print("The episode is completed. Reset the environment with 'reset()'")
         elif self.global_done is None:
             print("You cannot conduct step without first calling reset. Reset the environment with 'reset()'")
-
-    def close(self):
-        """
-        Sends a shutdown signal to the gym environment.
-        """
-        self.env.close()
-
-    @property
-    def logfile_path(self):
-        return self._log_path
-
-    @property
-    def brains(self):
-        return self._brains
-
-    @property
-    def global_done(self):
-        return self._global_done
-
-    @property
-    def academy_name(self):
-        return self._academy_name
-
-    @property
-    def brain_names(self):
-        return self._brain_names
-
-    @property
-    def external_brain_names(self):
-        return self._external_brain_names
