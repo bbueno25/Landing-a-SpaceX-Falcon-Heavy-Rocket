@@ -1,15 +1,7 @@
 import argparse
-import agent
-import environment as environ
 import logging
-import models
-import numpy as np
 import os
-import renderthread
-import shutil
-import tensorflow as tf
-import time
-import trainer as tnr
+import task
 
 logging.basicConfig(level=logging.INFO)
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -57,7 +49,7 @@ if __name__ == '__main__':
                         default=20e6,
                         help='Maximum number of steps to run environment [default:20e6].')
     parser.add_argument('--model_name',
-                        default='v2',
+                        default='v1',
                         help='The sub-directory name for model and summary statistics.')
     parser.add_argument('--normalize_steps',
                         default=10e6,
